@@ -1,5 +1,6 @@
 ---
 import {type SpaceXAPI} from '../types/api';
+import CardLaunche from './CardLaunche.astro';
 const res= await fetch('https://api.spacexdata.com/v5/launches/query',{
     method:'POST',
     headers:{
@@ -11,7 +12,7 @@ const res= await fetch('https://api.spacexdata.com/v5/launches/query',{
             sort:{
                 date_unix:"asc",
             },
-            limit:30,
+            limit:12,
         },
     }),
 });
@@ -21,9 +22,14 @@ const {docs:launches} =  await res.json() as SpaceXAPI;
 
 <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
 {
-    launches.map((launch)=><article>
-        <img src={launch.links.patch.small} />
-        <h2>Launch #{launch.id}</h2>
-        </article>)
+    launches.map(({id,links,details,flight_number:flightNumer,success})=>
+        <CardLaunche 
+        id={id}
+        img={links.patch.small}
+        details={details}
+        flightNumer={flightNumer}
+        success={success}
+        />
+    )
 }
 </div>
